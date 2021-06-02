@@ -1,0 +1,34 @@
+{
+  "expo": {
+    "name": "notes521",
+    "slug": "snack-a13a3acd-d929-4a7f-b304-5e3432debbaf",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.jaggit3.snacka13a3acdd9294a7fb3045e3432debbaf"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "package": "com.jaggit3.snacka13a3acdd9294a7fb3045e3432debbaf"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
