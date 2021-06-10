@@ -1,0 +1,41 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "install",
+			"problemMatcher": [],
+			"label": "npm: install",
+			"detail": "install dependencies from package",
+			"group": "build"
+		},
+		{
+			"label": "tsc",
+			"type": "shell",
+			"command": "./node_modules/.bin/tsc",
+			"args": [
+				"--noEmit"
+			],
+			"presentation": {
+				"reveal": "never",
+				"echo": false,
+				"focus": false,
+				"panel": "dedicated"
+			},
+			"problemMatcher": "$tsc-watch"
+		},
+		{
+			"type": "typescript",
+			"tsconfig": "tsconfig.json",
+			"option": "watch",
+			"problemMatcher": [
+				"$tsc-watch"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"label": "tsc: watch - tsconfig.json"
+		}
+	]
+}
