@@ -7,6 +7,7 @@ import Constants from 'expo-constants';
 import { HomeScreenNavigationProp, NoteScreenNavigationProp, NoteScreenRouteProp, RouteParamList } from './RouteParamList';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
 let globalNotes: string[] = []
 
 
@@ -18,29 +19,19 @@ function HomeScreen ({ navigation }: { navigation: HomeScreenNavigationProp}) {
     
     if(result !== null){ 
       const parsed = JSON.parse(result);
-      //setNotes(globalNotes.concat([parsed.text]))
-      console.log("text", parsed)
-      globalNotes = [...globalNotes, parsed.text]
+      globalNotes = [...parsed]
       setNotes(globalNotes)
     }
   }
 
+
   useFocusEffect(
     useCallback(() => {
       getInput()
-      console.log(globalNotes)
-      //setNotes(globalNotes)
     }, [])
   );
   
-  // const getInput = async() => {
-  //   const inp = await AsyncStorage.getItem('input');
-  //   const prevNote = JSON.parse(inp !);
 
-  //   setNotes([...globalNotes, prevNote])
-
-  // }
- 
 
   return (
     <View style = {{flex: 1, alignItems: 'center', justifyContent: 'flex-end'}}>
@@ -79,8 +70,12 @@ function NoteScreen({route, navigation}: {route: NoteScreenRouteProp, navigation
 
     const handleSave = async() => {
       const input = {text: text}
-      await AsyncStorage.setItem('input', JSON.stringify(input))
-     
+      if(route.params){
+        globalNotes[route.params.index] = text; 
+      }else{
+        globalNotes = globalNotes.concat([input.text])
+      }
+      await AsyncStorage.setItem('input', JSON.stringify(globalNotes))
     };
     
     const saveNote = useCallback(() => {
@@ -90,27 +85,15 @@ function NoteScreen({route, navigation}: {route: NoteScreenRouteProp, navigation
         globalNotes[route.params.index] = text;
       }
         handleSave();
-        
-        globalNotes = [...globalNotes];
         navigation.navigate('Home');
 
     }, [text])
 
     const onAddNotePress = useCallback(() => {
       navigation.navigate('Home');
-      //globalNotes = globalNotes.concat([text]);
     }, [text]);
 
-    // const deleteNote = useCallback(() => {
-    //   if(!route.params){
-    //     globalNotes = globalNotes;
-    //   }else{
-    //     globalNotes.splice(route.params.index, 1);
-    //   }
-    //   navigation.navigate('Home');
-
-    // },[])
-
+   
     return(
 
     <View style = {{flex:1, alignItems: 'center', justifyContent: 'center'}}>
@@ -119,10 +102,8 @@ function NoteScreen({route, navigation}: {route: NoteScreenRouteProp, navigation
             title = "Save"
             onPress = {saveNote}
         />
-        {/* <Button
-            title = "Delete"
-            onPress = {deleteNote}
-          /> */}
+        
+      
     </View>
     );
 }
