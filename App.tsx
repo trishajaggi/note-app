@@ -6,6 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Constants from 'expo-constants';
 import { HomeScreenNavigationProp, NoteScreenNavigationProp, NoteScreenRouteProp, RouteParamList } from './RouteParamList';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import insertTextAtCursor from 'insert-text-at-cursor';
 
 
 let globalNotes: string[] = []
@@ -57,7 +58,6 @@ function HomeScreen ({ navigation }: { navigation: HomeScreenNavigationProp}) {
 }
 
 
-
 function NoteScreen({route, navigation}: {route: NoteScreenRouteProp, navigation: NoteScreenNavigationProp}){
     let val = "Default"
     if(!route.params){
@@ -67,6 +67,25 @@ function NoteScreen({route, navigation}: {route: NoteScreenRouteProp, navigation
     }
 
     const [text, setText] = useState(val);
+    const [selection, setSelection] = useState({start: 0})
+
+
+    const insertAtCaret = (text: string, quote: string) => {
+      
+      if(text === null){
+        throw new Error;
+      }else{
+
+      console.log(selection)
+      if(selection === undefined){
+        return quote + text
+      } else {
+       let newtxt = text.slice(0, selection.start) + quote + text.slice(selection.start, text.length)
+       return newtxt
+      }
+    }
+    }
+    
 
     const handleSave = async() => {
       const input = {text: text}
@@ -93,18 +112,48 @@ function NoteScreen({route, navigation}: {route: NoteScreenRouteProp, navigation
       navigation.navigate('Home');
     }, [text]);
 
-   
+  
+
+    const addQuote = useCallback(async () => {
+      try{
+        let response = await fetch('https://zenquotes.io/api/random', {
+          method: 'GET'});
+        let responseJson = await response.json();
+        setText(insertAtCaret(text, responseJson[0].q) )
+        return responseJson[0].q;
+      } catch(error){
+        console.log(error)
+      } 
+    }, [selection.start])
+
     return(
 
-    <View style = {{flex:1, alignItems: 'center', justifyContent: 'center'}}>
-        <TextInput style = {{height: 40}} value = {text} onChangeText = {setText} />
-        <Button
-            title = "Save"
-            onPress = {saveNote}
+    <><View style= { styles.notePage }>
+        <TextInput style=
+          {{ height: 60, fontSize: 18, lineHeight: 18 * 0.75,paddingTop: 18 - (18 * 0.75) }} 
+          value={text} 
+          onChangeText={setText} 
+          multiline={true} 
+          selection={selection}
+          onSelectionChange={(event) => {
+              const {nativeEvent: { selection: { start } }} = event;
+              setSelection({ start});
+          }}
+         
         />
-        
-      
-    </View>
+      </View>
+      <View style={ styles.notePgBtn }>
+          <Button
+            title="Save"
+            onPress={saveNote} />
+
+          <Button
+            title="Add quote"
+            onPress={addQuote} />
+            </View>
+            <View>
+        </View></>
+
     );
 }
 
@@ -137,6 +186,16 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  notePage: {
+    flex: 1, 
+    alignItems: 'flex-start', 
+    justifyContent: 'flex-start'
+  }, 
+  notePgBtn: {
+     flex: 1, 
+     alignItems: 'center', 
+     justifyContent: 'flex-end' 
+  }
 });
 
 
